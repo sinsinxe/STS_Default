@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------
 // 파일: STS_AssetBookmarkerWindow.cs
-// 역할: Asset Bookmarker 툴의 메인 에디터 창 UI 및 로직 (Open Script 버튼 추가)
+// 역할: Asset Bookmarker 툴의 메인 에디터 창 UI 및 로직 (버튼 위치 수정)
 // --------------------------------------------------------------------------------
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -41,10 +41,12 @@ public class STS_AssetBookmarkerWindow : EditorWindow
 		else
 		{
 			data = CreateInstance<STS_AssetBookmarkerData>();
-			string path = "Assets/Editor/STS_AssetBookmarkerData.asset";
-			if (!Directory.Exists("Assets/Editor"))
+			// 데이터 파일이 없을 경우 기본 경로에 생성
+			string path = "Assets/STS_Default/Tools/Editor/STS_AssetBookmarkerData.asset";
+			string directory = Path.GetDirectoryName(path);
+			if (!Directory.Exists(directory))
 			{
-				Directory.CreateDirectory("Assets/Editor");
+				Directory.CreateDirectory(directory);
 			}
 			AssetDatabase.CreateAsset(data, path);
 			AssetDatabase.SaveAssets();
@@ -265,16 +267,18 @@ public class STS_AssetBookmarkerWindow : EditorWindow
 	{
 		for (int i = 0; i < group.items.Count; i++)
 		{
+			// 리스트 변경으로 인한 에러 방지
 			if (i < group.items.Count) DrawBookmarkItem(group.items[i], group);
 		}
 	}
 
+	// ✨ 개선: 파란색 버튼 위치를 삭제 버튼 옆으로 옮김
 	private void DrawBookmarkItem(BookmarkItem item, BookmarkGroup parentGroup)
 	{
 		string path = AssetDatabase.GUIDToAssetPath(item.guid);
 		if (string.IsNullOrEmpty(path))
 		{
-			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.BeginHorizontal(GUI.skin.box);
 			GUI.color = Color.gray;
 			EditorGUILayout.LabelField(new GUIContent($" [삭제됨] {item.alias ?? "알 수 없음"}", EditorGUIUtility.IconContent("console.warnicon.sml").image));
 			GUI.color = Color.white;
@@ -294,6 +298,8 @@ public class STS_AssetBookmarkerWindow : EditorWindow
 		EditorGUILayout.BeginHorizontal();
         
 		Color originalColor = GUI.backgroundColor;
+		
+		// 삭제 버튼
 		GUI.backgroundColor = new Color(1f, 0.4f, 0.4f, 1f);
 		if (GUILayout.Button("X", deleteButtonStyle, GUILayout.Width(20), GUILayout.Height(18)))
 		{
@@ -303,28 +309,21 @@ public class STS_AssetBookmarkerWindow : EditorWindow
 		}
 		GUI.backgroundColor = originalColor;
 
-		GUIContent label = new GUIContent(string.IsNullOrEmpty(item.alias) ? asset.name : item.alias, AssetDatabase.GetCachedIcon(path));
-		Rect itemRect = EditorGUILayout.GetControlRect(GUILayout.ExpandWidth(true));
-		GUI.Label(itemRect, label);
-        
-		GUILayout.FlexibleSpace();
-
-		// "Edit Prefab" 버튼
+		// "Edit Prefab", "Open" 버튼
 		if (asset is GameObject && PrefabUtility.IsPartOfPrefabAsset(asset))
 		{
 			GUI.backgroundColor = new Color(0.2f, 0.5f, 1.0f, 1.0f);
-			if (GUILayout.Button("Edit Prefab", GUILayout.Width(80)))
+			if (GUILayout.Button("Edit Prefab", GUILayout.Width(80), GUILayout.Height(18)))
 			{
 				AssetDatabase.OpenAsset(asset);
 				GUIUtility.ExitGUI();
 			}
 			GUI.backgroundColor = originalColor;
 		}
-		// "Open Scene" 버튼
 		else if (asset is SceneAsset)
 		{
 			GUI.backgroundColor = new Color(0.2f, 0.5f, 1.0f, 1.0f);
-			if (GUILayout.Button("Open", GUILayout.Width(80)))
+			if (GUILayout.Button("Open", GUILayout.Width(80), GUILayout.Height(18)))
 			{
 				if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
 				{
@@ -334,11 +333,10 @@ public class STS_AssetBookmarkerWindow : EditorWindow
 			}
 			GUI.backgroundColor = originalColor;
 		}
-		// ✨ 개선: "Open" 스크립트 버튼 추가
 		else if (asset is MonoScript)
 		{
 			GUI.backgroundColor = new Color(0.2f, 0.5f, 1.0f, 1.0f);
-			if (GUILayout.Button("Open", GUILayout.Width(80)))
+			if (GUILayout.Button("Open", GUILayout.Width(80), GUILayout.Height(18)))
 			{
 				AssetDatabase.OpenAsset(asset);
 				GUIUtility.ExitGUI();
@@ -346,12 +344,29 @@ public class STS_AssetBookmarkerWindow : EditorWindow
 			GUI.backgroundColor = originalColor;
 		}
 
+		// 에셋 이름과 아이콘을 Label로 표시
+		GUIContent label = new GUIContent(string.IsNullOrEmpty(item.alias) ? asset.name : item.alias, AssetDatabase.GetCachedIcon(path));
+		GUILayout.Label(label, GUILayout.Height(20), GUILayout.ExpandWidth(true));
+		Rect labelRect = GUILayoutUtility.GetLastRect(); // Label의 Rect를 가져옴
 
+		EditorGUILayout.EndHorizontal();
+
+		// 이벤트 처리 (Ping, Open, 별칭 변경)
 		Event currentEvent = Event.current;
-		if (itemRect.Contains(currentEvent.mousePosition))
+		if (labelRect.Contains(currentEvent.mousePosition))
 		{
-			if (currentEvent.type == EventType.MouseDown && currentEvent.button == 0 && currentEvent.clickCount == 1) EditorGUIUtility.PingObject(asset);
-			else if (currentEvent.type == EventType.MouseDown && currentEvent.button == 0 && currentEvent.clickCount == 2) AssetDatabase.OpenAsset(asset);
+			if (currentEvent.type == EventType.MouseDown && currentEvent.button == 0)
+			{
+				if (currentEvent.clickCount == 1)
+				{
+					EditorGUIUtility.PingObject(asset);
+				}
+				else if (currentEvent.clickCount == 2)
+				{
+					AssetDatabase.OpenAsset(asset);
+				}
+				currentEvent.Use();
+			}
 			else if (currentEvent.type == EventType.ContextClick)
 			{
 				GenericMenu menu = new GenericMenu();
@@ -364,11 +379,11 @@ public class STS_AssetBookmarkerWindow : EditorWindow
 					}
 				});
 				menu.ShowAsContext();
+				currentEvent.Use();
 			}
-			if(currentEvent.type != EventType.Layout && currentEvent.type != EventType.Repaint) currentEvent.Use();
 		}
-		EditorGUILayout.EndHorizontal();
 	}
+
 
 	private void AddBookmark(Object obj, BookmarkGroup group, bool showNotification = true)
 	{
@@ -426,6 +441,7 @@ public class STS_AssetBookmarkerWindow : EditorWindow
 	}
 }
 
+// 별칭 입력을 위한 간단한 다이얼로그 창
 public class EditorInputDialog : EditorWindow
 {
 	private string title, description, inputText;

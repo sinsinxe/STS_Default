@@ -87,24 +87,6 @@ MonoBehaviour:
       alias: 
     - guid: 94b6f0e33d6cd413e987ac5b0833e2b6
       alias: 
-  - name: Default
-    items:
-    - guid: 109e9bdd0fcc649c5bc59085c35bdc83
-      alias: 
-    - guid: d4b51af54f379e94fb3f205d551cfd08
-      alias: 
-    - guid: ed4bc16c9df594740b702551c4579739
-      alias: 
-    - guid: 7d8d6b55edbe42c42b38ffe324b99b2f
-      alias: 
-    - guid: b9426bdfdf9fe1941a2e146e108609f0
-      alias: 
-    - guid: cfae3f3b096fe31418c73e843c4a587c
-      alias: 
-    - guid: 9359c407d1e6e3443ae2f4d0ab6bc3da
-      alias: 
-    - guid: faf496b06e2b9470594ca2f1fdfa3d02
-      alias: 
   - name: STS_Default
     items:
     - guid: 49598593535d48d4796d33f1ca4e616b
