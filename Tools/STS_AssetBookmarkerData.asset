@@ -1,0 +1,131 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 392d69ce6acfa9e43b1fb4d1eeb7f7cf, type: 3}
+  m_Name: STS_AssetBookmarkerData
+  m_EditorClassIdentifier: 
+  groups:
+  - name: Scene
+    items:
+    - guid: 72170740452af4941ab134d9a81e60e5
+      alias: 
+    - guid: 2d93d66ad6502e9488b147b6f3e45b2f
+      alias: 
+    - guid: 8dc0b9941ffd82f4f8e7af874f356636
+      alias: 
+    - guid: 61867ff1a0165ca45947271ebedb4b5a
+      alias: 
+    - guid: fad18a0e61c6db548b9329891c1077aa
+      alias: 
+    - guid: aa17e5c9dd6d02048a9e026505c3d5cb
+      alias: 
+  - name: Prefab
+    items:
+    - guid: 050a950d0a1960e4fb564647b0f582ba
+      alias: 
+    - guid: 9d1adc2fef2090f49a825619cb931156
+      alias: 
+    - guid: b1a8bde5d3edb5643843d0cd8571b7a4
+      alias: 
+    - guid: 89cf9935fed2e7247b4b5b3b4a2bc746
+      alias: 
+    - guid: adbb8fe3262f0d04b8b625e48372ba22
+      alias: 
+    - guid: 03f9e977d12e96c489f1b000bc8db2e1
+      alias: 
+    - guid: 59885cddd8fd9b642b777bf8910d2823
+      alias: 
+    - guid: d8af80717b6e215489c5e0ff59458acb
+      alias: 
+    - guid: 7e013ea69e35dcc498ffc33146766117
+      alias: 
+    - guid: 301ff149fa91fe142b00b692ce3d4c58
+      alias: 
+    - guid: 8afdec793116a804bb27629b773779fb
+      alias: 
+    - guid: 88ce0a8b7878681408b9ec1e9aa9652e
+      alias: 
+  - name: Script
+    items:
+    - guid: 294e7ed1762c25244956ec3a54d070d5
+      alias: 
+    - guid: eb8853f8da0f5f9a0eb4ec87d516d832
+      alias: 
+    - guid: 22d5f13ff3c431f43beb4a5e43490314
+      alias: 
+    - guid: 6d60614359a65594bbbccaff3756f505
+      alias: 
+    - guid: 2ffd6015fbf8e644b8fc6395ecf73d10
+      alias: 
+    - guid: 68427acc2d69cdb7fd44869ffda8fbac
+      alias: 
+    - guid: 9bb00bde3d0cc224f974a06abbebe60a
+      alias: 
+    - guid: 936f63cb25a09ed45a72486898e85d34
+      alias: 
+    - guid: eb388908d008ed347a672e50a33f0af3
+      alias: 
+    - guid: 60117c7029ed0a64f99999efe7905ec7
+      alias: 
+    - guid: b7d4696e25ccf924cbd6849936c667e7
+      alias: 
+    - guid: 7f122e98835917442a1cec1a869925f3
+      alias: 
+    - guid: edd04b82aaddce9489db3e647f84ff7e
+      alias: 
+    - guid: d98ad1674ee8d5040ad22d07feddcab5
+      alias: 
+  - name: UI
+    items:
+    - guid: fa4a72350af3c40aaaab67c974c5c466
+      alias: 
+    - guid: 6a9b17f983e2843c4bb24ab89ec3f9e1
+      alias: 
+    - guid: 4d028b829fe794a4bb02cb35600edbf3
+      alias: 
+    - guid: 928201c344a7e4f3780e4f2d6a1566dd
+      alias: 
+    - guid: bb302210c06b54207a86ce2438d53b89
+      alias: 
+    - guid: c6f872931ed1b4cfeb706e40fe234f11
+      alias: 
+    - guid: b42a2b454a29d4e58b98f053929fc3e7
+      alias: 
+    - guid: 94b6f0e33d6cd413e987ac5b0833e2b6
+      alias: 
+  - name: Default
+    items:
+    - guid: 109e9bdd0fcc649c5bc59085c35bdc83
+      alias: 
+    - guid: d4b51af54f379e94fb3f205d551cfd08
+      alias: 
+    - guid: ed4bc16c9df594740b702551c4579739
+      alias: 
+    - guid: 7d8d6b55edbe42c42b38ffe324b99b2f
+      alias: 
+    - guid: b9426bdfdf9fe1941a2e146e108609f0
+      alias: 
+    - guid: cfae3f3b096fe31418c73e843c4a587c
+      alias: 
+    - guid: 9359c407d1e6e3443ae2f4d0ab6bc3da
+      alias: 
+  - name: STS_Default
+    items:
+    - guid: 49598593535d48d4796d33f1ca4e616b
+      alias: 
+    - guid: 4b1deed23d119c24993b8e011f17365e
+      alias: 
+    - guid: 9471a01aed51eb54f8c9e2f91fec96c3
+      alias: 
+    - guid: 392d69ce6acfa9e43b1fb4d1eeb7f7cf
+      alias: 
+    - guid: 90ae700d0a39ce9478f75f3c4ed818d7
+      alias: 
