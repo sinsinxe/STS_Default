@@ -61,27 +61,13 @@ MonoBehaviour:
       alias: 
     - guid: 22d5f13ff3c431f43beb4a5e43490314
       alias: 
-    - guid: 6d60614359a65594bbbccaff3756f505
+    - guid: 4b96bf35f0eef394688cd9cd21164f31
       alias: 
-    - guid: 2ffd6015fbf8e644b8fc6395ecf73d10
+    - guid: b560445ab39a20e4eaf71fa746872bfc
       alias: 
-    - guid: 68427acc2d69cdb7fd44869ffda8fbac
+    - guid: e13dbaa0622d53e4fad89dccba2f0e8a
       alias: 
-    - guid: 9bb00bde3d0cc224f974a06abbebe60a
-      alias: 
-    - guid: 936f63cb25a09ed45a72486898e85d34
-      alias: 
-    - guid: eb388908d008ed347a672e50a33f0af3
-      alias: 
-    - guid: 60117c7029ed0a64f99999efe7905ec7
-      alias: 
-    - guid: b7d4696e25ccf924cbd6849936c667e7
-      alias: 
-    - guid: 7f122e98835917442a1cec1a869925f3
-      alias: 
-    - guid: edd04b82aaddce9489db3e647f84ff7e
-      alias: 
-    - guid: d98ad1674ee8d5040ad22d07feddcab5
+    - guid: d4f7bc178b392f648a2f9dad59e67dcf
       alias: 
   - name: UI
     items:
@@ -117,6 +103,8 @@ MonoBehaviour:
       alias: 
     - guid: 9359c407d1e6e3443ae2f4d0ab6bc3da
       alias: 
+    - guid: faf496b06e2b9470594ca2f1fdfa3d02
+      alias: 
   - name: STS_Default
     items:
     - guid: 49598593535d48d4796d33f1ca4e616b
@@ -128,4 +116,18 @@ MonoBehaviour:
     - guid: 392d69ce6acfa9e43b1fb4d1eeb7f7cf
       alias: 
     - guid: 90ae700d0a39ce9478f75f3c4ed818d7
+      alias: 
+    - guid: 45e61d813af99ae4b80445aa498fbcb0
+      alias: 
+    - guid: e1ca42f23ff330e4dbe22bff2b7bffde
+      alias: 
+    - guid: 3e00ace1cc15fcf4ea4dc0d621cfe4df
+      alias: 
+    - guid: eeea3e023b40f4449ab27292e582c27c
+      alias: 
+    - guid: 0a2440b6b1a310c4bb9354779830186e
+      alias: 
+    - guid: 459165c492db49c458112568a31f260a
+      alias: 
+    - guid: e3863584adc234940829c9a23dd6499e
       alias: 
