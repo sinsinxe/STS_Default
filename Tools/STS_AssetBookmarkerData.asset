@@ -35,6 +35,8 @@ MonoBehaviour:
       alias: 
     - guid: ed4bc16c9df594740b702551c4579739
       alias: 
+    - guid: 0ae1e4f668415f845bf38e5cc76b98bd
+      alias: 
   - name: Prefab
     items:
     - guid: 050a950d0a1960e4fb564647b0f582ba
@@ -78,26 +80,6 @@ MonoBehaviour:
     - guid: d4f7bc178b392f648a2f9dad59e67dcf
       alias: 
     - guid: edd04b82aaddce9489db3e647f84ff7e
-      alias: 
-  - name: STS_Default
-    items:
-    - guid: 392d69ce6acfa9e43b1fb4d1eeb7f7cf
-      alias: 
-    - guid: 90ae700d0a39ce9478f75f3c4ed818d7
-      alias: 
-    - guid: 45e61d813af99ae4b80445aa498fbcb0
-      alias: 
-    - guid: e1ca42f23ff330e4dbe22bff2b7bffde
-      alias: 
-    - guid: 3e00ace1cc15fcf4ea4dc0d621cfe4df
-      alias: 
-    - guid: eeea3e023b40f4449ab27292e582c27c
-      alias: 
-    - guid: 0a2440b6b1a310c4bb9354779830186e
-      alias: 
-    - guid: 459165c492db49c458112568a31f260a
-      alias: 
-    - guid: e3863584adc234940829c9a23dd6499e
       alias: 
   - name: UI
     items:
