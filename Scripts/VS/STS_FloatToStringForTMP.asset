@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e66c6366d904e98bc83428217d4fd7, type: 3}
+  m_Name: STS_FloatToStringForTMP
+  m_EditorClassIdentifier: 
+  _data:
+    _json: '{"graph":{"variables":{"Kind":"Flow","collection":{"$content":[],"$version":"A"},"$version":"A"},"controlInputDefinitions":[{"key":"In","label":null,"summary":null,"hideLabel":false}],"controlOutputDefinitions":[{"key":"Out","label":null,"summary":null,"hideLabel":false}],"valueInputDefinitions":[{"hasDefaultValue":true,"defaultValue":{"$content":0,"$type":"System.Int32"},"_type":"System.Int32","key":"Input
+      Float","label":null,"summary":null,"hideLabel":false},{"hasDefaultValue":true,"defaultValue":null,"_type":"System.String","key":"Format","label":null,"summary":null,"hideLabel":false},{"hasDefaultValue":false,"defaultValue":null,"_type":"TMPro.TextMeshProUGUI","key":"Text
+      Object","label":null,"summary":null,"hideLabel":false}],"valueOutputDefinitions":[{"_type":"System.String","key":"Output
+      String","label":null,"summary":null,"hideLabel":false}],"title":"STS Int ToString
+      TMP","summary":null,"pan":{"x":-55.99988,"y":29.87523},"zoom":1.0,"elements":[{"defaultValues":{},"position":{"x":-626.0,"y":-112.0},"guid":"c9285c86-2c8e-4927-851d-21c639fa895d","$version":"A","$type":"Unity.VisualScripting.GraphInput","$id":"15"},{"defaultValues":{},"position":{"x":382.0,"y":-75.0},"guid":"491653f5-25a6-4fa4-a7d9-6ff51fc68797","$version":"A","$type":"Unity.VisualScripting.GraphOutput","$id":"17"},{"chainable":true,"parameterNames":["sourceText"],"member":{"name":"SetText","parameterTypes":["System.String"],"targetType":"TMPro.TextMeshProUGUI","targetTypeName":"TMPro.TextMeshProUGUI","$version":"A"},"defaultValues":{"target":null,"%sourceText":{"$content":"","$type":"System.String"}},"position":{"x":71.0,"y":50.0},"guid":"cde11df5-1863-4b61-b6ad-c886f015e799","$version":"A","$type":"Unity.VisualScripting.InvokeMember","$id":"19"},{"chainable":false,"parameterNames":["format"],"member":{"name":"ToString","parameterTypes":["System.String"],"targetType":"System.Single","targetTypeName":"System.Single","$version":"A"},"defaultValues":{"target":{"$content":0.0,"$type":"System.Single"},"%format":{"$content":"","$type":"System.String"}},"position":{"x":-278.0,"y":-113.0},"guid":"483d19d6-7853-44aa-8a0b-ab6048fc792d","$version":"A","$type":"Unity.VisualScripting.InvokeMember","$id":"23"},{"sourceUnit":{"$ref":"19"},"sourceKey":"exit","destinationUnit":{"$ref":"17"},"destinationKey":"Out","guid":"bf08909a-81e9-4cac-8810-9f2469042f76","$type":"Unity.VisualScripting.ControlConnection"},{"sourceUnit":{"$ref":"15"},"sourceKey":"In","destinationUnit":{"$ref":"23"},"destinationKey":"enter","guid":"7ee07d1c-64f8-4ad4-913a-95d7e0a7f343","$type":"Unity.VisualScripting.ControlConnection"},{"sourceUnit":{"$ref":"23"},"sourceKey":"exit","destinationUnit":{"$ref":"19"},"destinationKey":"enter","guid":"4c928360-d851-42d2-87cb-0e96471dc721","$type":"Unity.VisualScripting.ControlConnection"},{"sourceUnit":{"$ref":"15"},"sourceKey":"Text
+      Object","destinationUnit":{"$ref":"19"},"destinationKey":"target","guid":"177985c2-c2c2-4d13-990d-eade69c66754","$type":"Unity.VisualScripting.ValueConnection"},{"sourceUnit":{"$ref":"15"},"sourceKey":"Format","destinationUnit":{"$ref":"23"},"destinationKey":"%format","guid":"c6aaab2b-2453-42c7-bc31-1feab4754d74","$type":"Unity.VisualScripting.ValueConnection"},{"sourceUnit":{"$ref":"15"},"sourceKey":"Input
+      Float","destinationUnit":{"$ref":"23"},"destinationKey":"target","guid":"3e2653e3-acd8-4803-b948-ca135911b70c","$type":"Unity.VisualScripting.ValueConnection"},{"sourceUnit":{"$ref":"23"},"sourceKey":"result","destinationUnit":{"$ref":"19"},"destinationKey":"%sourceText","guid":"f5a294c1-a973-48c6-a458-bf29b8de829f","$type":"Unity.VisualScripting.ValueConnection"}],"$version":"A"}}'
+    _objectReferences: []
