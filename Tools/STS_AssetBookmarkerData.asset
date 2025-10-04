@@ -27,15 +27,15 @@ MonoBehaviour:
       alias: 
     - guid: aa17e5c9dd6d02048a9e026505c3d5cb
       alias: 
-    - guid: faf496b06e2b9470594ca2f1fdfa3d02
+    - guid: 88ce0a8b7878681408b9ec1e9aa9652e
       alias: 
-    - guid: 050a950d0a1960e4fb564647b0f582ba
+    - guid: 88efeb52dd1bd964893ed2338cc6b035
       alias: 
-    - guid: d4b51af54f379e94fb3f205d551cfd08
+    - guid: e1ca42f23ff330e4dbe22bff2b7bffde
       alias: 
-    - guid: ed4bc16c9df594740b702551c4579739
+    - guid: 22d5f13ff3c431f43beb4a5e43490314
       alias: 
-    - guid: 0ae1e4f668415f845bf38e5cc76b98bd
+    - guid: fa4a72350af3c40aaaab67c974c5c466
       alias: 
   - name: Prefab
     items:
@@ -95,9 +95,7 @@ MonoBehaviour:
       alias: 
     - guid: c6f872931ed1b4cfeb706e40fe234f11
       alias: 
-    - guid: ed4bc16c9df594740b702551c4579739
+    - guid: 88efeb52dd1bd964893ed2338cc6b035
       alias: 
-    - guid: 5364d673cb3e2754383741e4662eec79
-      alias: 
-    - guid: faf496b06e2b9470594ca2f1fdfa3d02
+    - guid: e1ca42f23ff330e4dbe22bff2b7bffde
       alias: 
