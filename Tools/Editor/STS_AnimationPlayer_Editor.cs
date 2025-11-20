@@ -39,7 +39,17 @@ public class AnimatorButtonGeneratorEditor : Editor
 		// 기존 데이터 초기화
 		script.parameters.Clear();
 
-		AnimatorController controller = script.targetAnimator.runtimeAnimatorController as AnimatorController;
+		AnimatorController controller = null;
+		
+		if (script.targetAnimator.runtimeAnimatorController is AnimatorOverrideController overrideController)
+		{
+			controller = overrideController.runtimeAnimatorController as AnimatorController;
+		}
+		else
+		{
+			controller = script.targetAnimator.runtimeAnimatorController as AnimatorController;
+		}
+
 		if (controller == null) return;
 
 		// 파라미터 모드일 때: 모든 파라미터(Trigger, Bool, Int 등)를 가져옵니다.

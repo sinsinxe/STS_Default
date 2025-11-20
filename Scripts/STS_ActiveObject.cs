@@ -2,23 +2,18 @@
 
 public class STS_ActiveObject : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-	public GameObject ActiveObject;
+	[SerializeField]
+	private GameObject targetObject;
 	
-	void Start()
-    {
-	   
-    }
-    
 	public void SetActiveTrue()
 	{
-		ActiveObject.SetActive(true);
+		if (targetObject != null)
+			targetObject.SetActive(true);
 	}
     
 	public void SetActiveFalse()
 	{
-		ActiveObject.SetActive(false);
+		if (targetObject != null)
+			targetObject.SetActive(false);
 	}
-    
-
 }
