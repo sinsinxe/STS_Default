@@ -18,10 +18,10 @@ public class STS_ImageFontGenerator : EditorWindow
 	// 내부 처리용 변수
 	private List<Rect> detectedRects = new List<Rect>();
     
-	[MenuItem("Tools/[ZP] ImageFontGenerator")]
+	[MenuItem("Tools/[STS] ImageFontGenerator")]
 	public static void ShowWindow()
 	{
-		GetWindow<STS_ImageFontGenerator>("[ZP] Font Gen");
+		GetWindow<STS_ImageFontGenerator>("[STS] Font Gen");
 	}
 
 	void OnGUI()
