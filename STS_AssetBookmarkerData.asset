@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 392d69ce6acfa9e43b1fb4d1eeb7f7cf, type: 3}
+  m_Name: STS_AssetBookmarkerData
+  m_EditorClassIdentifier: 
+  groups:
+  - name: Default
+    items:
+    - guid: 35c41d7bdcc22a647a0e35d9cf1e6b85
+      alias: 
+    - guid: e381e9b71c9c7bf47b6026ade1be514c
+      alias: 
+  - name: Res
+    items:
+    - guid: dd58094e4fe2b6547a23bdc8eeb2f007
+      alias: 
+    - guid: 8fe2d91c983bc44c488025fa4c5cdc57
+      alias: 
+    - guid: 40f56bb24e705455b9a3789dfb47ffd6
+      alias: 
+    - guid: 5dfe03b1b3eba4fb6b3a5a42015afdc0
+      alias: 
+    - guid: 9bd376593286d4ac0995cf078c15e455
+      alias: 
+    - guid: 71be0b604d46b44cba70d69bd7ca5d9d
+      alias: 
+    - guid: ef9f24c30f4ea45b6945389851951c03
+      alias: 
+    - guid: 297f51d7eea654a4688c96a0777d0884
+      alias: 
+    - guid: ec5d0000e5a85447eb8364c4387f6931
+      alias: 
+    - guid: b9d3f1a91df24439dab9b1175dedb927
+      alias: 
+    - guid: 4f0061ef3604543c1a3c89ee89790488
+      alias: 
