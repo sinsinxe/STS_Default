@@ -402,7 +402,7 @@ public static class ComponentQuickMenu
 			btnReset.SetEnabled(targets.Length > 0);
 			btnCopy.SetEnabled(true);
 
-			bool	bool canPasteNewAny = false;
+			bool canPasteNewAny = false;
 			foreach (var go in gos)
 			{
 				if (go == null) continue;
