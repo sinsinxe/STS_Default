@@ -19,9 +19,9 @@ public static class ComponentQuickMenu
 	private const float FONT_SCALE      = 0.9f; // 폰트 10% 감소(= 90%)
 
 	// 컬러(0~1 float)
-	private static readonly Color COLOR_RED_BG   = new Color(0.7962264f, 0.1046818f, 0f, 1f); // Delete
-	private static readonly Color COLOR_GREEN_BG = new Color(0.2735667f, 0.6377357f, 0.253891f, 1f); // Copy
-	private static readonly Color COLOR_BLUE_BG  = new Color(0.2969099f, 0.5639141f, 0.7056604f, 1f); // Paste
+	private static readonly Color COLOR_RED_BG   = new Color(0.7962264f, 0.1046818f, 0f, 1f);           // Delete
+	private static readonly Color COLOR_GREEN_BG = new Color(0.2735667f, 0.6377357f, 0.253891f, 1f);    // Copy
+	private static readonly Color COLOR_BLUE_BG  = new Color(0.2969099f, 0.5639141f, 0.7056604f, 1f);   // Paste
 	private static readonly Color COLOR_WHITE_FG = new Color(1f, 1f, 1f, 1f);
 
 	// ✅ Button 상태 저장용
@@ -53,6 +53,7 @@ public static class ComponentQuickMenu
 		EditorApplication.update -= PatchAllInspectors_Update;
 		EditorApplication.update += PatchAllInspectors_Update;
 
+		// (현 버전에서는 사용 안 함)
 		Editor.finishedDefaultHeaderGUI -= OnFinishedDefaultHeaderGUI;
 		Editor.finishedDefaultHeaderGUI += OnFinishedDefaultHeaderGUI;
 	}
@@ -218,6 +219,10 @@ public static class ComponentQuickMenu
 	// ======================================================================
 	// ✅ Multi-selection helpers
 	// ======================================================================
+	/// <summary>
+	/// 같은 타입 컴포넌트를 여러 오브젝트에서 동시에 선택한 경우에만 멀티로 반환.
+	/// (타입이 섞여있으면 안전하게 단일로 폴백)
+	/// </summary>
 	private static Component[] GetTargetComponents(Component comp, Editor compEditor)
 	{
 		if (comp == null) return Array.Empty<Component>();
@@ -261,12 +266,12 @@ public static class ComponentQuickMenu
 	{
 		var bar = new VisualElement { name = BAR_NAME };
 
-		// 오른쪽 정렬(공백 제거)
+		// ✅ 왼쪽 정렬
 		bar.style.flexDirection = FlexDirection.Row;
 		bar.style.alignItems = Align.Center;
-		bar.style.justifyContent = Justify.FlexEnd;
-		bar.style.flexGrow = 1;
-		bar.style.width = new Length(100, LengthUnit.Percent);
+		bar.style.justifyContent = Justify.FlexStart;
+		bar.style.flexGrow = 0;
+		bar.style.width = StyleKeyword.Auto;
 
 		bar.style.paddingLeft = 0;
 		bar.style.paddingRight = 0;
@@ -287,11 +292,8 @@ public static class ComponentQuickMenu
 		int W(int original) => Mathf.Max(16, original - WIDTH_SHRINK_PX);
 
 		// ===== 색상 유틸: 비활성화 시에도 컬러감 유지 + 톤다운 + Hover/Pressed 반응 =====
-		Color Darken(Color c, float factor)
-			=> new Color(c.r * factor, c.g * factor, c.b * factor, c.a);
-
-		Color Brighten(Color c, float t) // t: 0~1, white로 lerp
-			=> Color.Lerp(c, Color.white, Mathf.Clamp01(t));
+		Color Darken(Color c, float factor) => new Color(c.r * factor, c.g * factor, c.b * factor, c.a);
+		Color Brighten(Color c, float t) => Color.Lerp(c, Color.white, Mathf.Clamp01(t));
 
 		void ApplyButtonColor(Button b, bool enabled, Color bg, Color fg)
 		{
@@ -325,8 +327,8 @@ public static class ComponentQuickMenu
 			b.RegisterCallback<PointerCaptureOutEvent>(_ => { d.down = false; refresh?.Invoke(); });
 		}
 
-		// ===== Buttons (라벨 극단 축약) =====
-		var btnReset = MakeBtn("R", W(28), () =>
+		// ===== Buttons =====
+		var btnReset = MakeBtn("R", W(28), "Reset Component(s)", () =>
 		{
 			var targets = GetTargetComponents(comp, compEditor);
 			if (targets.Length == 0) return;
@@ -335,14 +337,14 @@ public static class ComponentQuickMenu
 			RepaintAll();
 		});
 
-		var btnCopy = MakeBtn("C", W(28), () =>
+		var btnCopy = MakeBtn("C", W(28), "Copy Component", () =>
 		{
 			if (comp == null) return;
 			ComponentUtilityCopy(comp);
 			RepaintAll();
 		});
 
-		var btnPasteNew = MakeBtn("PN", W(34), () =>
+		var btnPasteNew = MakeBtn("PN", W(34), "Paste As New (Multi if possible)", () =>
 		{
 			var targets = GetTargetComponents(comp, compEditor);
 			var gos = GetTargetGameObjects(targets);
@@ -356,7 +358,7 @@ public static class ComponentQuickMenu
 			RepaintAll();
 		});
 
-		var btnPasteValues = MakeBtn("PV", W(34), () =>
+		var btnPasteValues = MakeBtn("PV", W(34), "Paste Values (Multi if possible)", () =>
 		{
 			var targets = GetTargetComponents(comp, compEditor);
 			foreach (var c in targets)
@@ -368,29 +370,15 @@ public static class ComponentQuickMenu
 			RepaintAll();
 		});
 
-		var btnUp = MakeBtn("▲", W(28), () =>
+		// ✅ 멀티 삭제로 개선
+		var btnRemove = MakeBtn("X", W(28), "Remove Component(s)", () =>
 		{
-			if (comp == null) return;
-			ComponentUtilityMoveUp(comp);
+			var targets = GetTargetComponents(comp, compEditor);
+			if (targets == null || targets.Length == 0) return;
+
+			RemoveComponents(targets, "Remove Component(s)");
 			RepaintAll();
 		});
-
-		var btnDown = MakeBtn("▼", W(28), () =>
-		{
-			if (comp == null) return;
-			ComponentUtilityMoveDown(comp);
-			RepaintAll();
-		});
-
-		var btnRemove = MakeBtn("X", W(28), () =>
-		{
-			if (comp == null) return;
-			RemoveComponents(new[] { comp }, "Remove Component");
-			RepaintAll();
-		});
-
-		// 마지막 버튼은 오른쪽 끝에 딱 붙게
-		btnRemove.style.marginRight = 0;
 
 		void UpdateStates()
 		{
@@ -402,29 +390,14 @@ public static class ComponentQuickMenu
 			btnReset.SetEnabled(targets.Length > 0);
 			btnCopy.SetEnabled(true);
 
-			bool canPasteNewAny = false;
-			foreach (var go in gos)
-			{
-				if (go == null) continue;
-				if (CanPasteAsNewOrAssumeTrue(go)) { canPasteNewAny = true; break; }
-			}
-
-			bool canPasteValuesAny = false;
-			foreach (var c in targets)
-			{
-				if (c == null) continue;
-				if (CanPasteValuesOrAssumeTrue(c)) { canPasteValuesAny = true; break; }
-			}
+			bool canPasteNewAny = gos.Any(go => go != null && CanPasteAsNewOrAssumeTrue(go));
+			bool canPasteValuesAny = targets.Any(c => c != null && CanPasteValuesOrAssumeTrue(c));
 
 			btnPasteNew.SetEnabled(canPasteNewAny);
 			btnPasteValues.SetEnabled(canPasteValuesAny);
 
-			bool canUp = CanMoveUp(comp);
-			bool canDown = CanMoveDown(comp);
+			// Transform은 삭제 금지(멀티여도 동일)
 			bool canRemove = (comp is not Transform);
-
-			btnUp.SetEnabled(canUp);
-			btnDown.SetEnabled(canDown);
 			btnRemove.SetEnabled(canRemove);
 
 			ApplyButtonColor(btnCopy, btnCopy.enabledSelf, COLOR_GREEN_BG, COLOR_WHITE_FG);
@@ -432,18 +405,10 @@ public static class ComponentQuickMenu
 			ApplyButtonColor(btnPasteValues, btnPasteValues.enabledSelf, COLOR_BLUE_BG, COLOR_WHITE_FG);
 			ApplyButtonColor(btnRemove, btnRemove.enabledSelf, COLOR_RED_BG, COLOR_WHITE_FG);
 
-			// Reset/Up/Down은 기본 스타일 유지
+			// Reset은 기본 스타일 유지
 			btnReset.style.backgroundColor = StyleKeyword.Null;
 			btnReset.style.color = StyleKeyword.Null;
 			btnReset.style.opacity = btnReset.enabledSelf ? 1f : 0.9f;
-
-			btnUp.style.backgroundColor = StyleKeyword.Null;
-			btnUp.style.color = StyleKeyword.Null;
-			btnUp.style.opacity = btnUp.enabledSelf ? 1f : 0.9f;
-
-			btnDown.style.backgroundColor = StyleKeyword.Null;
-			btnDown.style.color = StyleKeyword.Null;
-			btnDown.style.opacity = btnDown.enabledSelf ? 1f : 0.9f;
 		}
 
 		// 컬러 버튼 hover/pressed
@@ -456,8 +421,6 @@ public static class ComponentQuickMenu
 		bar.Add(btnCopy);
 		bar.Add(btnPasteNew);
 		bar.Add(btnPasteValues);
-		bar.Add(btnUp);
-		bar.Add(btnDown);
 		bar.Add(btnRemove);
 
 		bar.RegisterCallback<AttachToPanelEvent>(_ =>
@@ -471,7 +434,10 @@ public static class ComponentQuickMenu
 		return bar;
 	}
 
-	private static Button MakeBtn(string text, int width, Action onClick)
+	/// <summary>
+	/// tooltip 포함 버튼 생성
+	/// </summary>
+	private static Button MakeBtn(string text, int width, string tooltip, Action onClick)
 	{
 		var b = new Button(() =>
 		{
@@ -482,6 +448,8 @@ public static class ComponentQuickMenu
 				}
 		})
 		{ text = text };
+
+		b.tooltip = tooltip;
 
 		b.style.width = width;
 		b.style.height = 18;
@@ -508,26 +476,6 @@ public static class ComponentQuickMenu
 	}
 
 	// ===== Can... =====
-	private static bool CanMoveUp(Component c)
-	{
-		if (c == null) return false;
-		if (c is Transform) return false;
-
-		var list = c.gameObject.GetComponents<Component>();
-		int idx = Array.IndexOf(list, c);
-		return idx > 1;
-	}
-
-	private static bool CanMoveDown(Component c)
-	{
-		if (c == null) return false;
-		if (c is Transform) return false;
-
-		var list = c.gameObject.GetComponents<Component>();
-		int idx = Array.IndexOf(list, c);
-		return idx >= 1 && idx < list.Length - 1;
-	}
-
 	private static bool CanPasteAsNewOrAssumeTrue(GameObject go)
 	{
 		try
@@ -567,9 +515,14 @@ public static class ComponentQuickMenu
 	// ===== Actions =====
 	private static void RemoveComponents(Component[] comps, string undoName)
 	{
+		if (comps == null) return;
+
 		foreach (var c in comps)
 		{
+			if (c == null) continue;
 			if (c is Transform) continue;
+
+			// Undo를 위해 DestroyObjectImmediate 사용
 			Undo.DestroyObjectImmediate(c);
 		}
 	}
@@ -640,12 +593,6 @@ public static class ComponentQuickMenu
 
 	private static void ComponentUtilityPasteValues(Component c)
 	=> InvokeComponentUtility("PasteComponentValues", new[] { typeof(Component) }, new object[] { c }, "PasteComponentValues");
-
-	private static void ComponentUtilityMoveUp(Component c)
-	=> InvokeComponentUtility("MoveComponentUp", new[] { typeof(Component) }, new object[] { c }, "MoveComponentUp");
-
-	private static void ComponentUtilityMoveDown(Component c)
-	=> InvokeComponentUtility("MoveComponentDown", new[] { typeof(Component) }, new object[] { c }, "MoveComponentDown");
 
 	private static void InvokeComponentUtility(string method, Type[] sig, object[] args, string label)
 	{
