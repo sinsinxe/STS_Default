@@ -11,6 +11,7 @@ public class STS_ImageFontGenerator : EditorWindow
 	private Texture2D sourceTexture;
 	private string charSequence = "0123456789"; 
 	private string fontName = "MyFont";
+	private DefaultAsset saveFolder; // [개선 1] 저장될 폴더 객체
 	private int alphaThreshold = 10;
 	private bool fixNumbers = true;
 	private bool forceSquarePOT = true; 
@@ -26,33 +27,55 @@ public class STS_ImageFontGenerator : EditorWindow
 
 	void OnGUI()
 	{
-		GUILayout.Label("[ZP] 이미지 폰트 생성기 (Size Fix)", EditorStyles.boldLabel);
+		GUILayout.Label("[STS] 이미지 폰트 생성기 (v2.0)", EditorStyles.boldLabel);
 		EditorGUILayout.HelpBox(
 			"사용 방법:\n" +
-			"1. '원본 이미지'를 넣고 '글자 순서'를 입력하세요.\n" +
-			"2. '1. 이미지 분석' -> '2. 폰트 생성' 순서로 진행합니다.\n" +
-			"3. 생성된 폰트는 이제 유니티 Text 컴포넌트에서 사이즈 조절이 가능합니다.", 
+			"1. '원본 이미지'를 넣고 '저장 폴더'를 지정하세요.\n" +
+			"2. '1. 이미지 분석' 버튼을 눌러 글자를 인식시킵니다.\n" +
+			"3. 감지된 개수와 입력한 글자 수가 같으면 '2. 폰트 생성' 버튼을 누르세요.", 
 			MessageType.Info);
 
 		EditorGUILayout.Space();
 
+		// 1. 리소스 설정 섹션
 		GUILayout.Label("1. 리소스 설정", EditorStyles.boldLabel);
+        
 		sourceTexture = (Texture2D)EditorGUILayout.ObjectField(
-			new GUIContent("원본 이미지", "글자가 나열된 투명 배경의 PNG 이미지"), 
+			new GUIContent("원본 이미지 (Texture)", "글자가 나열된 투명 배경의 PNG 이미지를 넣어주세요."), 
 			sourceTexture, typeof(Texture2D), false);
-		fontName = EditorGUILayout.TextField("저장할 폰트 이름", fontName);
+
+		fontName = EditorGUILayout.TextField(
+			new GUIContent("저장할 폰트 이름", "생성될 .fnt 파일과 .png 파일의 이름입니다."), 
+			fontName);
+
+		// [개선 1] 저장할 폰트 폴더 옵션 추가
+		saveFolder = (DefaultAsset)EditorGUILayout.ObjectField(
+			new GUIContent("저장 폴더 (Option)", "지정하면 저장 창 없이 이 폴더에 바로 저장됩니다."), 
+			saveFolder, typeof(DefaultAsset), false);
         
 		EditorGUILayout.Space();
         
+		// 2. 세부 설정 섹션
 		GUILayout.Label("2. 세부 설정", EditorStyles.boldLabel);
-		GUILayout.Label("글자 순서 입력 (Character Sequence)");
+
+		GUILayout.Label(new GUIContent("글자 순서 입력 (Character Sequence)", "이미지에 보이는 글자 순서대로 빠짐없이 입력해주세요."));
 		charSequence = EditorGUILayout.TextArea(charSequence, GUILayout.Height(40));
-		alphaThreshold = EditorGUILayout.IntSlider("투명도 민감도", alphaThreshold, 0, 255);
-		fixNumbers = EditorGUILayout.Toggle("숫자/기호 정렬 최적화", fixNumbers);
-		forceSquarePOT = EditorGUILayout.Toggle("정사각 2의 거듭제곱 (POT)", forceSquarePOT);
+
+		alphaThreshold = EditorGUILayout.IntSlider(
+			new GUIContent("투명도 민감도 (Alpha)", "배경과 글자를 구분하는 기준값입니다."), 
+			alphaThreshold, 0, 255);
+
+		fixNumbers = EditorGUILayout.Toggle(
+			new GUIContent("숫자/기호 정렬 최적화", "체크: 숫자 너비 통일 및 기호 위치 보정\n미체크: 모든 글자 높이값 동일 유지"), 
+			fixNumbers);
+
+		forceSquarePOT = EditorGUILayout.Toggle(
+			new GUIContent("정사각 2의 거듭제곱 (POT)", "체크 시 이미지를 256, 512 등 정사각 규격으로 생성합니다."),
+			forceSquarePOT);
 
 		EditorGUILayout.Space(15);
         
+		// 3. 액션 버튼 섹션
 		if (GUILayout.Button("1. 이미지 분석 실행 (Analyze)", GUILayout.Height(35)))
 		{
 			AnalyzeImage();
@@ -64,11 +87,11 @@ public class STS_ImageFontGenerator : EditorWindow
 			GUILayout.Label("3. 분석 결과 확인", EditorStyles.boldLabel);
 
 			bool countMatch = charSequence.Length == detectedRects.Count;
-			string statusMsg = $"감지됨: {detectedRects.Count}개 / 입력됨: {charSequence.Length}개";
+			string statusMsg = $"감지된 글자 영역: {detectedRects.Count}개\n입력한 글자 개수: {charSequence.Length}개";
 
 			if (countMatch)
 			{
-				EditorGUILayout.HelpBox(statusMsg + "\n일치합니다.", MessageType.Info);
+				EditorGUILayout.HelpBox(statusMsg + "\n\n개수가 일치합니다! 폰트를 생성할 수 있습니다.", MessageType.Info);
 				GUI.backgroundColor = Color.green; 
 				if (GUILayout.Button("2. 폰트 파일 생성 및 저장 (Generate)", GUILayout.Height(40)))
 				{
@@ -78,14 +101,18 @@ public class STS_ImageFontGenerator : EditorWindow
 			}
 			else
 			{
-				EditorGUILayout.HelpBox(statusMsg + "\n[주의] 개수가 일치하지 않습니다.", MessageType.Error);
+				EditorGUILayout.HelpBox(statusMsg + "\n\n[주의] 개수가 일치하지 않습니다.", MessageType.Error);
 			}
 		}
 	}
 
 	void AnalyzeImage()
 	{
-		if (sourceTexture == null) return;
+		if (sourceTexture == null) 
+		{
+			EditorUtility.DisplayDialog("알림", "원본 이미지를 먼저 넣어주세요.", "확인");
+			return;
+		}
 
 		string path = AssetDatabase.GetAssetPath(sourceTexture);
 		TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
@@ -96,6 +123,7 @@ public class STS_ImageFontGenerator : EditorWindow
 		}
 
 		detectedRects.Clear();
+        
 		Color32[] pixels = sourceTexture.GetPixels32();
 		int width = sourceTexture.width;
 		int height = sourceTexture.height;
@@ -116,16 +144,8 @@ public class STS_ImageFontGenerator : EditorWindow
 				}
 			}
 
-			if (rowHasPixel && !inRow)
-			{
-				inRow = true;
-				startY = y;
-			}
-			else if (!rowHasPixel && inRow)
-			{
-				inRow = false;
-				rows.Add((startY, y));
-			}
+			if (rowHasPixel && !inRow) { inRow = true; startY = y; }
+			else if (!rowHasPixel && inRow) { inRow = false; rows.Add((startY, y)); }
 		}
 		if (inRow) rows.Add((startY, height));
 
@@ -139,64 +159,36 @@ public class STS_ImageFontGenerator : EditorWindow
 				bool colHasPixel = false;
 				for (int y = row.start; y < row.end; y++)
 				{
-					if (pixels[y * width + x].a > alphaThreshold)
-					{
-						colHasPixel = true;
-						break;
-					}
+					if (pixels[y * width + x].a > alphaThreshold) { colHasPixel = true; break; }
 				}
 
-				if (colHasPixel && !inChar)
-				{
-					inChar = true;
-					startX = x;
-				}
-				else if (!colHasPixel && inChar)
-				{
-					inChar = false;
-					detectedRects.Add(RefineBounds(pixels, width, startX, row.start, x - startX, row.end - row.start));
-				}
+				if (colHasPixel && !inChar) { inChar = true; startX = x; }
+				else if (!colHasPixel && inChar) { inChar = false; detectedRects.Add(RefineBounds(pixels, width, startX, row.start, x - startX, row.end - row.start)); }
 			}
-			if (inChar)
-			{
-				detectedRects.Add(RefineBounds(pixels, width, startX, row.start, width - startX, row.end - row.start));
-			}
+			if (inChar) detectedRects.Add(RefineBounds(pixels, width, startX, row.start, width - startX, row.end - row.start));
 		}
 
-		detectedRects = detectedRects
-			.OrderByDescending(r => r.y)
-			.ThenBy(r => r.x)
-			.GroupBy(r => Mathf.FloorToInt(r.y / (r.height * 0.5f))) 
-			.SelectMany(g => g.OrderBy(r => r.x))
-			.ToList();
-            
 		detectedRects.Sort((a, b) =>
 		{
 			if (Mathf.Abs(a.y - b.y) > 10) return b.y.CompareTo(a.y);
 			return a.x.CompareTo(b.x);
 		});
-
-		Debug.Log($"[ZP] 분석 완료. {detectedRects.Count}개");
 	}
 
 	Rect RefineBounds(Color32[] pixels, int texWidth, int x, int y, int w, int h)
 	{
 		int minX = x + w, maxX = x, minY = y + h, maxY = y;
 		bool foundAny = false;
-        
 		for(int cy = y; cy < y + h; cy++) {
 			for(int cx = x; cx < x + w; cx++) {
 				if (pixels[cy * texWidth + cx].a > alphaThreshold) {
-					if (cx < minX) minX = cx;
-					if (cx > maxX) maxX = cx;
-					if (cy < minY) minY = cy;
-					if (cy > maxY) maxY = cy;
+					if (cx < minX) minX = cx; if (cx > maxX) maxX = cx;
+					if (cy < minY) minY = cy; if (cy > maxY) maxY = cy;
 					foundAny = true;
 				}
 			}
 		}
-		if (!foundAny) return new Rect(x, y, w, h);
-		return new Rect(minX, minY, maxX - minX + 1, maxY - minY + 1);
+		return foundAny ? new Rect(minX, minY, maxX - minX + 1, maxY - minY + 1) : new Rect(x, y, w, h);
 	}
 
 	void GenerateFont()
@@ -210,12 +202,13 @@ public class STS_ImageFontGenerator : EditorWindow
 		float maxNumHeight = 0;
 		float overallMaxHeight = 0;
 
+		// 1. 최대 값 사전 계산
 		for (int i = 0; i < count; i++)
 		{
 			char c = charSequence[i];
 			Rect r = detectedRects[i];
 			if (r.height > overallMaxHeight) overallMaxHeight = r.height;
-			if (fixNumbers && char.IsDigit(c))
+			if (char.IsDigit(c))
 			{
 				if (r.width > maxNumWidth) maxNumWidth = r.width;
 				if (r.height > maxNumHeight) maxNumHeight = r.height;
@@ -223,10 +216,10 @@ public class STS_ImageFontGenerator : EditorWindow
 			glyphs.Add(new GlyphInfo { character = c, originalRect = r });
 		}
         
-		if (fixNumbers && maxNumHeight == 0) maxNumHeight = overallMaxHeight;
+		if (maxNumHeight == 0) maxNumHeight = overallMaxHeight;
 
+		// 2. 개별 글자 텍스처 생성
 		List<Texture2D> processedTextures = new List<Texture2D>();
-        
 		foreach (var g in glyphs)
 		{
 			int targetW = (int)g.originalRect.width;
@@ -240,6 +233,7 @@ public class STS_ImageFontGenerator : EditorWindow
 
 			if (fixNumbers)
 			{
+				// 최적화 모드: 숫자 너비 통일, 기호 정렬
 				if (isNum)
 				{
 					targetW = (int)maxNumWidth;
@@ -253,170 +247,76 @@ public class STS_ImageFontGenerator : EditorWindow
 					else offsetY = (targetH - (int)g.originalRect.height) / 2;
 				}
 			}
+			else
+			{
+				// [개선 2] 최적화 해제 시: 모든 문자의 높이를 동일하게 유지
+				targetH = (int)overallMaxHeight;
+				offsetY = 0; // 하단 정렬
+			}
 
 			Texture2D newTex = new Texture2D(targetW, targetH, TextureFormat.RGBA32, false);
-			Color32[] clearColors = new Color32[targetW * targetH];
-			newTex.SetPixels32(clearColors);
-
-			int rectX = (int)g.originalRect.x;
-			int rectY = (int)g.originalRect.y;
-			int rectW = (int)g.originalRect.width;
-			int rectH = (int)g.originalRect.height;
-
-			Color[] srcBlock = sourceTexture.GetPixels(rectX, rectY, rectW, rectH);
-			newTex.SetPixels(offsetX, offsetY, rectW, rectH, srcBlock);
+			newTex.SetPixels32(new Color32[targetW * targetH]);
+			newTex.SetPixels(offsetX, offsetY, (int)g.originalRect.width, (int)g.originalRect.height, 
+				sourceTexture.GetPixels((int)g.originalRect.x, (int)g.originalRect.y, (int)g.originalRect.width, (int)g.originalRect.height));
 			newTex.Apply();
 
 			g.finalTexture = newTex;
 			processedTextures.Add(newTex);
 		}
 
+		// 3. 아틀라스 패킹
 		Texture2D tempAtlas = new Texture2D(256, 256, TextureFormat.RGBA32, false);
 		Rect[] uvs = tempAtlas.PackTextures(processedTextures.ToArray(), 2, 4096);
 		Texture2D finalAtlas = tempAtlas;
 
 		if (forceSquarePOT)
 		{
-			int usedW = tempAtlas.width;
-			int usedH = tempAtlas.height;
-			int maxSize = Mathf.Max(usedW, usedH);
-			int potSize = Mathf.NextPowerOfTwo(maxSize);
-			potSize = Mathf.Max(potSize, 32);
-
+			int potSize = Mathf.Max(Mathf.NextPowerOfTwo(Mathf.Max(tempAtlas.width, tempAtlas.height)), 32);
 			finalAtlas = new Texture2D(potSize, potSize, TextureFormat.RGBA32, false);
-			Color32[] clear = new Color32[potSize * potSize];
-			finalAtlas.SetPixels32(clear);
-			finalAtlas.SetPixels(0, 0, usedW, usedH, tempAtlas.GetPixels());
+			finalAtlas.SetPixels32(new Color32[potSize * potSize]);
+			finalAtlas.SetPixels(0, 0, tempAtlas.width, tempAtlas.height, tempAtlas.GetPixels());
 			finalAtlas.Apply();
 
 			for (int i = 0; i < uvs.Length; i++)
 			{
-				float newX = uvs[i].x * ((float)usedW / potSize);
-				float newY = uvs[i].y * ((float)usedH / potSize);
-				float newW = uvs[i].width * ((float)usedW / potSize);
-				float newH = uvs[i].height * ((float)usedH / potSize);
-				uvs[i] = new Rect(newX, newY, newW, newH);
+				uvs[i] = new Rect(uvs[i].x * ((float)tempAtlas.width / potSize), uvs[i].y * ((float)tempAtlas.height / potSize), 
+					uvs[i].width * ((float)tempAtlas.width / potSize), uvs[i].height * ((float)tempAtlas.height / potSize));
 			}
-			if (tempAtlas != finalAtlas) DestroyImmediate(tempAtlas);
 		}
 
-		string saveFolderPath = EditorUtility.SaveFolderPanel("Save Font", Application.dataPath, "");
-		if (string.IsNullOrEmpty(saveFolderPath)) return;
-
-		string absolutePath = Path.Combine(saveFolderPath, fontName + ".png");
-		string relativePath = "Assets" + absolutePath.Substring(Application.dataPath.Length);
-        
-		File.WriteAllBytes(absolutePath, finalAtlas.EncodeToPNG());
-        
+		// 4. 데이터 생성
 		StringBuilder sb = new StringBuilder();
-		int lineHeight = fixNumbers ? (int)Mathf.Max(maxNumHeight, overallMaxHeight) : (int)overallMaxHeight;
-        
-		// FNT 파일 저장 (참고용)
-		sb.AppendLine("<?xml version=\"1.0\"?>");
-		sb.AppendLine("<font>");
+		int lineHeight = (int)overallMaxHeight;
+		sb.AppendLine("<?xml version=\"1.0\"?>\n<font>");
 		sb.AppendLine($"  <info face=\"{fontName}\" size=\"{lineHeight}\" bold=\"0\" italic=\"0\" charset=\"\" unicode=\"1\" stretchH=\"100\" smooth=\"1\" aa=\"1\" padding=\"0,0,0,0\" spacing=\"1,1\" outline=\"0\"/>");
 		sb.AppendLine($"  <common lineHeight=\"{lineHeight}\" base=\"{(int)(lineHeight * 0.8f)}\" scaleW=\"{finalAtlas.width}\" scaleH=\"{finalAtlas.height}\" pages=\"1\" packed=\"0\" alphaChnl=\"1\" redChnl=\"0\" greenChnl=\"0\" blueChnl=\"0\"/>");
-		sb.AppendLine("  <pages>");
-		sb.AppendLine($"    <page id=\"0\" file=\"{fontName}.png\" />");
-		sb.AppendLine("  </pages>");
+		sb.AppendLine($"  <pages>\n    <page id=\"0\" file=\"{fontName}.png\" />\n  </pages>");
 		sb.AppendLine($"  <chars count=\"{glyphs.Count}\">");
 
 		for (int i = 0; i < glyphs.Count; i++)
 		{
-			var g = glyphs[i];
-			Rect uv = uvs[i];
-			int x = (int)(uv.x * finalAtlas.width);
-			int y = (int)(uv.y * finalAtlas.height);
-			int w = (int)(uv.width * finalAtlas.width);
-			int h = (int)(uv.height * finalAtlas.height);
-			int invY = finalAtlas.height - y - h;
-			int id = (int)g.character;
-			int xadv = g.finalTexture.width; 
-			sb.AppendLine($"    <char id=\"{id}\" x=\"{x}\" y=\"{invY}\" width=\"{w}\" height=\"{h}\" xoffset=\"0\" yoffset=\"0\" xadvance=\"{xadv}\" page=\"0\" chnl=\"15\" />");
+			var g = glyphs[i]; Rect uv = uvs[i];
+			int x = (int)(uv.x * finalAtlas.width); int y = (int)(uv.y * finalAtlas.height);
+			int w = (int)(uv.width * finalAtlas.width); int h = (int)(uv.height * finalAtlas.height);
+			sb.AppendLine($"    <char id=\"{(int)g.character}\" x=\"{x}\" y=\"{finalAtlas.height - y - h}\" width=\"{w}\" height=\"{h}\" xoffset=\"0\" yoffset=\"0\" xadvance=\"{g.finalTexture.width}\" page=\"0\" chnl=\"15\" />");
 		}
-		sb.AppendLine("  </chars>");
-		sb.AppendLine("</font>");
-		File.WriteAllText(Path.Combine(saveFolderPath, fontName + ".fnt"), sb.ToString());
+		sb.AppendLine("  </chars>\n</font>");
 
-		AssetDatabase.Refresh();
+		// 5. 저장 로직 (개선 1 반영)
+		string savePath = "";
+		if (saveFolder != null) savePath = AssetDatabase.GetAssetPath(saveFolder);
+		else savePath = EditorUtility.SaveFolderPanel("Save Font", Application.dataPath, "");
 
-		// 3. Unity Font Asset 생성 (FontSize 강제 주입 포함)
-		CreateUnityFontAsset(relativePath, fontName, glyphs, uvs, finalAtlas.width, finalAtlas.height, lineHeight);
+		if (!string.IsNullOrEmpty(savePath))
+		{
+			File.WriteAllBytes(Path.Combine(savePath, fontName + ".png"), finalAtlas.EncodeToPNG());
+			File.WriteAllText(Path.Combine(savePath, fontName + ".fnt"), sb.ToString());
+			AssetDatabase.Refresh();
+			Debug.Log($"[ZP] 폰트 저장 완료: {savePath}");
+		}
 
-		Debug.Log($"[ZP] 폰트 생성 완료! 경로: {saveFolderPath}");
-        
 		foreach (var tex in processedTextures) DestroyImmediate(tex);
 	}
 
-	void CreateUnityFontAsset(string texPath, string name, List<GlyphInfo> glyphs, Rect[] uvs, int atlasW, int atlasH, int lineHeight)
-	{
-		Texture2D tex = AssetDatabase.LoadAssetAtPath<Texture2D>(texPath);
-		if (tex == null)
-		{
-			Debug.LogError("생성된 텍스처를 로드할 수 없습니다.");
-			return;
-		}
-
-		string dir = Path.GetDirectoryName(texPath);
-		string matPath = Path.Combine(dir, name + ".mat");
-		Material fontMat = new Material(Shader.Find("UI/Default")); 
-		fontMat.mainTexture = tex;
-		AssetDatabase.CreateAsset(fontMat, matPath);
-
-		string fontPath = Path.Combine(dir, name + ".fontsettings");
-		Font customFont = new Font(name);
-		customFont.material = fontMat;
-
-		CharacterInfo[] charInfos = new CharacterInfo[glyphs.Count];
-
-		for (int i = 0; i < glyphs.Count; i++)
-		{
-			Rect uv = uvs[i];
-			float uMin = uv.x;
-			float uMax = uv.x + uv.width;
-			float vMin = uv.y;
-			float vMax = uv.y + uv.height;
-
-			int pW = (int)(uv.width * atlasW);
-			int pH = (int)(uv.height * atlasH);
-
-			CharacterInfo info = new CharacterInfo();
-			info.index = (int)glyphs[i].character;
-            
-			info.uvBottomLeft = new Vector2(uMin, vMin);
-			info.uvBottomRight = new Vector2(uMax, vMin);
-			info.uvTopLeft = new Vector2(uMin, vMax);
-			info.uvTopRight = new Vector2(uMax, vMax);
-
-			info.minX = 0;
-			info.maxX = pW;
-			info.minY = -pH; 
-			info.maxY = 0;
-            
-			info.advance = pW + 1; 
-
-			charInfos[i] = info;
-		}
-
-		customFont.characterInfo = charInfos;
-        
-		// [핵심 수정] SerializedObject를 통해 FontSize 및 LineSpacing 강제 설정
-		SerializedObject so = new SerializedObject(customFont);
-		so.Update();
-		so.FindProperty("m_FontSize").floatValue = lineHeight;      // 기준 폰트 크기 설정
-		so.FindProperty("m_LineSpacing").floatValue = lineHeight;   // 줄 간격 설정
-		so.FindProperty("m_Ascent").floatValue = lineHeight * 0.8f; // 기준선(Baseline) 대략 설정
-		so.ApplyModifiedProperties();
-
-		AssetDatabase.CreateAsset(customFont, fontPath);
-		EditorUtility.SetDirty(customFont);
-		AssetDatabase.SaveAssets();
-	}
-
-	private class GlyphInfo
-	{
-		public char character;
-		public Rect originalRect;
-		public Texture2D finalTexture;
-	}
+	private class GlyphInfo { public char character; public Rect originalRect; public Texture2D finalTexture; }
 }
